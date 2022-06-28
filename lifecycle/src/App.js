@@ -1,5 +1,5 @@
 import React from "react";
-import ReactDOM, { render } from "react-dom";
+
 import Counter from "./Components/counter";
 
 export default class App extends React.Component {
@@ -7,14 +7,17 @@ export default class App extends React.Component {
     super(props);
 
     this.state = {
+      cnt: 0,
       mount: true,
       ignoreProp: 0,
-
+      rapidCounter: 0,
       showErrorComponent: false,
     };
     this.mountCounter = () => this.setState({ mount: true });
     this.unmountCounter = () => this.setState({ mount: false });
     this.ignoreProp = () => this.setState({ ignoreProp: Math.random() });
+    this.seedGenrator = () =>
+      this.setState({ rapidCounter: Number.parseInt(Math.random() * 100) });
     this.toggleError = () =>
       this.setState({ showErrorComponent: !this.state.showErrorComponent });
   }
@@ -28,10 +31,12 @@ export default class App extends React.Component {
           UnMount Counter
         </button>
         <button onClick={this.ignoreProp}>Ignore Props</button>
-
+        <button onClick={this.seedGenrator}>rapidCounter</button>
         <button onClick={this.toggleError}>Toggle Error</button>
+
         {this.state.mount ? (
           <Counter
+            rapidCounter={this.state.rapidCounter}
             ignoreProp={this.state.ignoreProp}
             showErrorComponent={this.state.showErrorComponent}
           />

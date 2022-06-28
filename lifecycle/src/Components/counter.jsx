@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-const ErrorComponent = () => <div>{props.ignore}</div>;
+const ErrorComponent = (props) => <div>{props.ignore}</div>;
 
 class Counter extends React.Component {
   constructor(props) {
@@ -9,6 +9,7 @@ class Counter extends React.Component {
 
     this.state = {
       counter: 0,
+      rapidCounter: 0,
     };
 
     this.increment = () => this.setState({ counter: this.state.counter + 1 });
@@ -35,7 +36,9 @@ class Counter extends React.Component {
     console.log("should component update - Render");
     return true;
   }
-
+  handleForceUpdate = () => {
+    this.forceUpdate(this.setState({ counter: 75 }));
+  };
   render() {
     console.log("Render");
     if (this.props.showErrorComponent && this.state.error) {
@@ -47,13 +50,35 @@ class Counter extends React.Component {
       <div>
         <button onClick={this.increment}>Increment</button>
         <button onClick={this.decrement}>Decrement</button>
+        <button onClick={this.handleForceUpdate}>force update</button>
         <div className="counter">Counter: {this.state.counter}</div>
         {this.props.showErrorComponent ? <ErrorComponent /> : null}
       </div>
     );
   }
+  static getDerivedStateFromProps(props, state) {
+    console.log("GetDerivedStatefromProps props:", props);
+    console.log("GetDerivedStatefromProps state:", state);
+
+    if (props.rapidCounter && state.rapidCounter !== props.rapidCounter) {
+      return {
+        rapidCounter: props.rapidCounter,
+        counter: props.rapidCounter,
+      };
+    }
+    return null;
+  }
+  getSnapshotBeforeUpdate(prevProps, prevState) {
+    console.log("Get Snapshot Before update", prevProps);
+    console.log("snapshot states:", prevState);
+    console.log("this.state value", this.state.counter);
+    if (this.state.counter % 2 === 0) return 2;
+    return null;
+  }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
+    console.log("Snapshot", snapshot);
+    console.log(prevProps);
     console.log("Component Did Update");
     console.log("----------------------");
   }
